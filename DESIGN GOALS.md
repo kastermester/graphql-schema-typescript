@@ -2,20 +2,20 @@
 
 Lots of tools to generate GraphQL schemas already exists. What makes this different?
 
-* Goals here does not include easy communication with backend databases / REST services. This is meant to generate code for the backend that can talk to *any* service.
-* What is a consideration is generating code that enables *strong* typing using TypeScript. IE. for every GraphQL type an appropriate TypeScript type should be generated on the backend.
+* Goals here does not include easy communication with backend databases / REST services. This is meant to generate code for the backend that can talk to _any_ service.
+* What is a consideration is generating code that enables _strong_ typing using TypeScript. IE. for every GraphQL type an appropriate TypeScript type should be generated on the backend.
 * Great error reporting. I don't want people working with this to be bothered by errors popping up from the GraphQL library. While the errors there are actually quite nice and descriptive, I want the errors to be given in the context of the files that the user themselves have written, not as a part of the generated files.
 
 ## Workflow
 
 The workflow I have in mind is using GraphQL schema DDL to specify types. The ideal workflow here is that the definitions are spread throughout many files. Ie:
 
-- schema/
-  - MyEnum.graphql
-  - MyType/
-    - MyType.common.graphql
-    - MyType.server.graphql
-    - MyType.graphql
+* schema/
+    * MyEnum.graphql
+    * MyType/
+        * MyType.common.graphql
+        * MyType.server.graphql
+        * MyType.graphql
 
 It is not my intention to enforce a specific structure or naming convention, other than that the files must end in `.graphql`.
 
@@ -23,15 +23,18 @@ Take, as an example, a simple enum type:
 
 ```graphql
 enum MyEnum {
-  Value1
-  Value2
+	Value1
+	Value2
 }
 ```
 
 For this sort of type we'd want to generate a type like this:
 
 ```ts
-const enum MyEnum { Value1 = 'Value1', Value2 = 'Value2' }
+const enum MyEnum {
+	Value1 = 'Value1',
+	Value2 = 'Value2',
+}
 ```
 
 Obviously there'd also be generated the appropriate GraphQL type on the backend (something like):
@@ -133,8 +136,9 @@ A class would be generated like so:
 
 ```ts
 export class MyType {
-	myField
+	myField;
 }
+```
 
 To indicate a resolve function - things again turn out to be somewhat more complicated than they seem. We need a file to `import` to know where the resolution logic resides. When declaring the type (`extend` or not) where there's resolutions inside that declaration, one would need to point to that file:
 
